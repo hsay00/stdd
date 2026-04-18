@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- FONT PERFORMANCE -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Montserrat:wght@300;500&family=Dancing+Script:wght@600&family=Great+Vibes&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+:root {
+  --primary: #13946b;
+  --brown: #6b4f3a;
+  --gold: #d4af37;
+  --wedding-red: #a83232;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100dvh;
+  background: #fafafa;
+  font-family: 'Montserrat', sans-serif;
+}
+
+#container {
+  position: relative;
+  width: 360px;
+  height: 620px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+#card {
+  width: 100%;
+  height: 100%;
+  background: url('photo.jpg') no-repeat 50% 48%;
+  background-size: cover;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.top {
+  font-size: 0.8rem;
+  letter-spacing: 3px;
+  color: var(--brown);
+}
+
+.names {
+  font-family: 'Lavonia Classy', 'Dancing Script', cursive;
+  font-size: 2.6rem;
+  color: var(--wedding-red);
+}
+
+/* DATE */
+.date-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.line {
+  width: 60px;
+  height: 1px;
+  background: rgba(107,79,58,0.4);
+  margin: 6px 0;
+}
+
+.day {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  color: var(--gold);
+}
+
+.month {
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  color: var(--brown);
+}
+
+/* VENUE */
+.venue-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--brown);
+}
+
+.venue-loc {
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  color: var(--brown);
+  opacity: 0.8;
+}
+
+/* NOTE */
+.note {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  opacity: 0.85;
+  color: var(--brown);
+  margin-top: 6px;
+}
+
+/* TIMER */
+#countdown {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.4);
+  backdrop-filter: blur(4px);
+  border-radius: 10px;
+}
+
+.time-box span {
+  font-size: 0.9rem;
+  color: var(--primary);
+}
+
+.label {
+  font-size: 0.5rem;
+  color: var(--brown);
+}
+
+/* BUTTONS */
+.btn {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.outline {
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
+
+#scratchCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+</style>
+</head>
+
+<body>
+
+<audio id="bgMusic" loop playsinline>
+  <source src="song.mp3" type="audio/mpeg">
+</audio>
+
+<div id="container">
+
+<div id="card">
+  <div class="top">SAVE THE DATE</div>
+
+  <div class="names">Anchal & Yash</div>
+
+  <div class="date-block">
+    <div class="line"></div>
+    <div class="day">11th & 12th</div>
+    <div class="month">DECEMBER 2026</div>
+    <div class="line"></div>
+  </div>
+
+  <div class="venue-name">Raajsa</div>
+  <div class="venue-loc">Kumbhalgarh, Rajasthan</div>
+
+  <div id="countdown">
+    <div class="time-box"><span id="d">00</span><div class="label">D</div></div>
+    <div class="time-box"><span id="h">00</span><div class="label">H</div></div>
+    <div class="time-box"><span id="m">00</span><div class="label">M</div></div>
+    <div class="time-box"><span id="s">00</span><div class="label">S</div></div>
+  </div>
+
+  <div class="note">Formal Invitation to Follow</div>
+
+  <a onclick="addToCalendar()" class="btn primary">Save the Date</a>
+
+  <a href="https://maps.google.com/?q=Raajsa+Kumbhalgarh+Rajasthan" target="_blank" class="btn outline">
+    View Location
+  </a>
+</div>
+
+<canvas id="scratchCanvas" width="360" height="620"></canvas>
+
+</div>
+
+<script>
+const canvas = document.getElementById("scratchCanvas");
+const ctx = canvas.getContext("2d");
+const music = document.getElementById("bgMusic");
+
+let revealed = false;
+
+/* MUSIC */
+document.addEventListener("click", ()=> music.play().catch(()=>{}), {once:true});
+document.addEventListener("touchstart", ()=> music.play().catch(()=>{}), {once:true});
+
+/* FANCY COVER */
+document.fonts.ready.then(() => {
+
+  function drawCover(glow = 0) {
+
+    const gradient = ctx.createLinearGradient(0,0,0,620);
+    gradient.addColorStop(0,"rgba(250,240,220,0.95)");
+    gradient.addColorStop(1,"rgba(255,245,230,0.98)");
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0,0,360,620);
+
+    ctx.textAlign="center";
+
+    ctx.shadowColor = "rgba(212,175,55,0.6)";
+    ctx.shadowBlur = glow;
+
+    ctx.font="36px 'Great Vibes'";
+    ctx.fillStyle="#6b4f3a";
+    ctx.fillText("Tap to Enter",180,300);
+
+    ctx.shadowBlur = 0;
+
+    ctx.globalAlpha=0.6;
+    ctx.font="14px Montserrat";
+    ctx.fillText("A celebration awaits",180,330);
+    ctx.globalAlpha=1;
+
+    const shimmer = ctx.createLinearGradient(0,0,360,0);
+    shimmer.addColorStop(0,"transparent");
+    shimmer.addColorStop(0.5,"rgba(255,255,255,0.4)");
+    shimmer.addColorStop(1,"transparent");
+
+    ctx.fillStyle = shimmer;
+    ctx.fillRect((Date.now()/5)%360, 280, 80, 2);
+  }
+
+  function animate(){
+    const glow = 10 + Math.sin(Date.now()/300)*8;
+    drawCover(glow);
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+});
+
+/* INSTANT TAP */
+canvas.addEventListener("touchstart", instantReveal, {passive:true});
+canvas.addEventListener("click", instantReveal);
+
+function instantReveal(){
+  if(revealed) return;
+  revealed = true;
+
+  startConfetti();
+
+  canvas.style.transition="opacity 0.6s ease";
+  canvas.style.opacity="0";
+
+  setTimeout(()=> canvas.style.display="none",600);
+}
+
+/* FAST CONFETTI */
+function startConfetti(){
+
+  // ✨ INSTANT TOP BURST (visible immediately)
+  confetti({
+    particleCount: 25,
+    spread: 70,
+    origin: { x: 0.5, y: 0.15 }, // 👈 slightly below top
+    colors: ['#d4af37']
+  });
+
+  // 🌿 SOFT FALL AFTER (subtle)
+  const end = Date.now() + 800;
+
+  (function frame() {
+    confetti({
+      particleCount: 3,
+      angle: 90,
+      spread: 40,
+      origin: { x: Math.random(), y: 0 },
+      gravity: 0.9,
+      scalar: 0.8,
+      colors: ['#d4af37']
+    });
+
+    if (Date.now() < end) requestAnimationFrame(frame);
+  })();
+}
+
+/* CALENDAR */
+function addToCalendar() {
+  const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+  const title = "Anchal & Yash Wedding";
+  const location = "Raajsa Kumbhalgarh Rajasthan";
+  const start = "20261211T000000";
+  const end = "20261213T000000";
+
+  if (isiOS) {
+    const ics = `BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+DTSTART:${start}
+DTEND:${end}
+SUMMARY:${title}
+LOCATION:${location}
+END:VEVENT
+END:VCALENDAR`;
+
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'event.ics';
+    link.click();
+  } else {
+    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${start}/${end}&location=${encodeURIComponent(location)}`;
+    window.open(url, '_blank');
+  }
+}
+
+/* TIMER */
+const wedding = new Date("Dec 11, 2026").getTime();
+
+setInterval(()=>{
+  const now = new Date().getTime();
+  const diff = wedding - now;
+
+  d.innerText = Math.floor(diff/86400000);
+  h.innerText = Math.floor(diff%86400000/3600000);
+  m.innerText = Math.floor(diff%3600000/60000);
+  s.innerText = Math.floor(diff%60000/1000);
+},1000);
+</script>
+
+</body>
+</html>
