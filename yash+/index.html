@@ -430,7 +430,19 @@ body {
   transform: translateX(-50%) translateY(0) !important;
 }
 
-.ganesh-wrap { top: 106px; }
+```css
+.ganesh-title-group {
+  top: 106px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: max-content;
+}
+
+.ganesh-wrap {
+  margin-bottom: 8px;
+}
+
 .ganesh-icon { 
   width: 54px; 
   height: 58px; 
@@ -439,11 +451,12 @@ body {
 }
 
 .shree-wrap { 
-  top: 172px; 
   font-size: 0.62rem; 
   color: var(--wedding-red); 
   font-weight: 600; 
   letter-spacing: 1px; 
+  white-space: nowrap;
+ 
 }
 
 .intro-wrap { 
@@ -818,22 +831,45 @@ body {
     </div>
   </div>
 
-  <!-- PAGE 2 (RICH AMBIENT GOLD GLOW) -->
-  <div class="page page-couple" data-effect="sacred_glow">
-    <div class="couple-element ganesh-wrap">
+  ```html
+<!-- PAGE 2 (RICH AMBIENT GOLD GLOW) -->
+<div class="page page-couple" data-effect="sacred_glow">
+
+  <div class="couple-element ganesh-title-group">
+
+    <div class="ganesh-wrap">
       <svg class="ganesh-icon" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
         <path d="M120 15C95 15 75 35 75 60C75 75 82 88 94 96C80 102 70 115 70 130C70 150 85 165 105 168V185H90C84 185 80 190 80 196C80 202 84 206 90 206H150C156 206 160 202 160 196C160 190 156 185 150 185H135V168C155 165 170 150 170 130C170 115 160 102 146 96C158 88 165 75 165 60C165 35 145 15 120 15ZM120 32C133 32 144 43 144 56C144 69 133 80 120 80C107 80 96 69 96 56C96 43 107 32 120 32ZM120 100C136 100 150 112 150 128C150 144 136 156 120 156C104 156 90 144 90 128C90 112 104 100 120 100Z"/>
       </svg>
     </div>
-    <div class="couple-element shree-wrap">|| श्रीं नाकोड़ा भैरवाय नमः ||</div>
-    <div class="couple-element intro-wrap">WE CORDIALLY REQUEST YOUR GRACIOUS PRESENCE AT THE WEDDING CELEBRATIONS OF</div>
-    <div class="couple-element groom-name-wrap">Yash</div>
-    <div class="couple-element groom-desc-wrap">S/O USHA DINESH SAKARIYA<br>G/S MANJULABEN HIMMATLALJI TAKHATGARH</div>
-    <div class="couple-element with-wrap">WITH</div>
-    <div class="couple-element bride-name-wrap">Anchal</div>
-    <div class="couple-element bride-desc-wrap">D/O MAMTA BHERULALJI<br>G/D SHANTHIDEVI PHOOTERMALJI &amp;<br>SUSHEELA BHAGWANCHANDJI JALORE</div>
+
+    <div class="shree-wrap">|| श्रीं नाकोड़ा भैरवाय नमः ||</div>
+
   </div>
 
+  <div class="couple-element intro-wrap">
+    WE CORDIALLY REQUEST YOUR GRACIOUS PRESENCE AT THE WEDDING CELEBRATIONS OF
+  </div>
+
+  <div class="couple-element groom-name-wrap">Yash</div>
+
+  <div class="couple-element groom-desc-wrap">
+    S/O USHA DINESH SAKARIYA<br>
+    G/S MANJULABEN HIMMATLALJI TAKHATGARH
+  </div>
+
+  <div class="couple-element with-wrap">WITH</div>
+
+  <div class="couple-element bride-name-wrap">Anchal</div>
+
+  <div class="couple-element bride-desc-wrap">
+    D/O MAMTA BHERULALJI<br>
+    G/D SHANTHIDEVI PHOOTERMALJI &amp;<br>
+    SUSHEELA BHAGWANCHANDJI JALORE
+  </div>
+
+</div>
+  
   <!-- PAGE 3 (VARMINT TWILIGHT GLOW) -->
   <div class="page page-welcome" data-effect="warm_bokeh">
     <div class="welcome-title">WELCOME DINNER</div>
