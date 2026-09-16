@@ -434,16 +434,20 @@ body {
   transform: translateX(-50%) translateY(0) !important;
 }
 
-.ganesh-wrap { top: 118px; }
-.ganesh-icon { 
-  width: 26px; 
-  height: 44px; 
-  fill: var(--gold); 
-  filter: drop-shadow(0 1px 2px rgba(255,255,255,0.9)); 
+.ganesh-wrap { 
+  position: absolute;
+  top: 118px; 
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .shree-wrap { 
+  position: absolute;
   top: 172px; 
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;        /* Ensures the text container spans full width so it centers nicely */
+  text-align: center; /* Centers the text inside its box */
   font-size: 0.62rem; 
   color: var(--wedding-red); 
   font-weight: 600; 
@@ -1388,6 +1392,6 @@ setInterval(updateTimer, 1000);
 }
 
 .starlit-title {
-    font-size: clamp(0.95rem, 4.8vw, 1.3rem) !important;
+    font-size: clamp(0.95rem, 4.8vw, 1.50rem) !important;
 }
 </style>
