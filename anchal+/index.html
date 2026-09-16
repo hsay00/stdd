@@ -438,7 +438,8 @@ body {
   position: absolute;
   top: 118px; 
   left: 50%;
-  transform: translateX(calc(-50% + 15px)); /* Increase or decrease '5px' to move him more or less */
+  transform: none !important; /* Forces it to ignore any other conflicting transforms */
+  margin-left: 15px;         /* <-- CHANGE THIS NUMBER: Increase this to move further right, or use a negative number to go left */
   width: max-content; 
 }
 
