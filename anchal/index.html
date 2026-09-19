@@ -985,7 +985,22 @@ body {
 
 </div>
 
-<script>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD6mAWvyHy4MAFThRp4voaa3KejYawnfc0",
+  authDomain: "yash-anchal-wedding.firebaseapp.com",
+  projectId: "yash-anchal-wedding",
+  storageBucket: "yash-anchal-wedding.firebasestorage.app",
+  messagingSenderId: "819588111453",
+  appId: "1:819588111453:web:df6c204200d4e0768901b4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 const pages = document.querySelectorAll('.page');
 const dotsContainer = document.getElementById('dotsContainer');
@@ -1049,26 +1064,36 @@ book.addEventListener('touchend', e => {
   if (touchEndX - touchStartX > 40) prevPage();
 }, {passive: true});
 
+// ===== FIREBASE DIYA WALL (shared with all invitation pages) =====
+
 let litDiyas = ["Yash", "Anchal"];
 
 function lightDiyaAction() {
   const input = document.getElementById('guestNameInput');
   const name = input.value.trim();
-  
+
   if (!name) {
     alert("Please enter your name first!");
     input.focus();
     return;
   }
 
-  litDiyas.unshift(name);
-  input.value = "";
-  renderDiyaWall();
+  addDoc(collection(db, "diyas"), {
+    name: name,
+    createdAt: new Date()
+  })
+  .then(() => {
+    input.value = "";
 
-  document.getElementById('modalMessageText').innerText = 
-    `Thank you, ${name}! Your sacred diya is now glowing bright, adding your heartfelt blessings to Yash & Anchal’s wedding journey.`;
+    document.getElementById('modalMessageText').innerText =
+      `Thank you, ${name}! Your sacred diya is now glowing bright, adding your heartfelt blessings to Yash & Anchal’s wedding journey.`;
 
-  document.getElementById('diyaModal').classList.add('visible');
+    document.getElementById('diyaModal').classList.add('visible');
+  })
+  .catch((error) => {
+    console.error("Error adding diya:", error);
+    alert("Something went wrong. Please try again.");
+  });
 }
 
 function closeDiyaModal() {
@@ -1078,13 +1103,40 @@ function closeDiyaModal() {
 function renderDiyaWall() {
   const listContainer = document.getElementById('diyaNamesList');
   const countContainer = document.getElementById('diyaCount');
-  
+
   countContainer.innerText = litDiyas.length;
-  listContainer.innerHTML = litDiyas.map(n => `<span class="diya-name-tag">${escapeHtml(n)}</span>`).join('');
+
+  listContainer.innerHTML = litDiyas
+    .map(n => `<span class="diya-name-tag">${escapeHtml(n)}</span>`)
+    .join('');
 }
 
+// Listen to Firebase in real-time — same "diyas" collection used by the other invitation pages
+const diyaQuery = query(
+  collection(db, "diyas"),
+  orderBy("createdAt", "desc")
+);
+
+onSnapshot(diyaQuery, (snapshot) => {
+  litDiyas = ["Yash", "Anchal"];
+
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+    if (data.name) {
+      litDiyas.push(data.name);
+    }
+  });
+
+  renderDiyaWall();
+});
+
 function escapeHtml(str) {
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 const music = document.getElementById("bgMusic");
@@ -1379,6 +1431,16 @@ function updateTimer() {
 
 updateTimer();
 setInterval(updateTimer, 1000);
+
+// Expose functions used by inline onclick="" handlers to global scope,
+// since top-level functions inside a <script type="module"> are NOT
+// automatically attached to window.
+window.openInvitation = openInvitation;
+window.toggleMusic = toggleMusic;
+window.nextPage = nextPage;
+window.prevPage = prevPage;
+window.lightDiyaAction = lightDiyaAction;
+window.closeDiyaModal = closeDiyaModal;
 
 </script>
 </body>
